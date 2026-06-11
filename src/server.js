@@ -1,14 +1,9 @@
-/**
- * Dummy execution verification module.
- * This proves our ESM exports and Jest integration are functioning natively.
- */
+import { logger } from './utils/logger.js';
+
 export const getAppStatus = () => {
   return 'SYSTEM_READY';
 };
 
-/**
- * Reads directly from the natively injected process.env boundary.
- */
 export const getEnvironmentProfile = () => {
   return {
     nodeEnv: process.env.NODE_ENV,
@@ -16,4 +11,5 @@ export const getEnvironmentProfile = () => {
   };
 };
 
-console.log(`[System] Initialization module loaded via ESM natively in [${process.env.NODE_ENV}] mode.`);
+// Replaced raw console.log with our structured enterprise logger
+logger.info(`[System] Initialization module loaded natively in [${process.env.NODE_ENV}] mode.`);
