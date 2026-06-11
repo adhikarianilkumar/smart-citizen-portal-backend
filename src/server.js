@@ -1,5 +1,9 @@
+import app from './app.js';
 import { logger } from './utils/logger.js';
 import { initializeDatabase } from './config/initDb.js';
+
+// Fallback operational execution port parameter defaults
+const PORT = process.env.PORT || 5000;
 
 export const getAppStatus = () => {
   return 'SYSTEM_READY';
@@ -14,14 +18,20 @@ export const getEnvironmentProfile = () => {
 
 /**
  * System Bootstrap Routine
- * Ensures infrastructure definitions are established before the service actively processes data.
+ * Validates data tiers and binds the configured Express server engine to the active network interface.
  */
 const startServer = async () => {
   try {
-    // Prevent server execution collision errors during automated test runner passes
+    // Intercept test suite loops to prevent network lock crashes during concurrent worker passes
     if (process.env.NODE_ENV !== 'test') {
+      // Synchronize database layouts
       await initializeDatabase();
-      logger.info(`[Smart Citizen Portal Engine] Active and securely booted in [${process.env.NODE_ENV}] mode.`);
+      
+      // Bind network socket
+      app.listen(PORT, () => {
+        logger.info(`[Smart Citizen Portal Server] Secure HTTP Listener established on interface port: ${PORT}`);
+        logger.info(`[Smart Citizen Portal Server] Active Operational Profile Mode: [${process.env.NODE_ENV}]`);
+      });
     }
   } catch (err) {
     logger.error(`[Critical Application Crash]: Service initialization halted: ${err.message}`);
